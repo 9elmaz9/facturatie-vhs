@@ -102,21 +102,3 @@ source .venv/bin/activate
 pip install -r requirements.txt
 streamlit run app.py
 ```
-
-## Publiceren op GitHub
-
-Als je dit project als publiek portfolio- of demonstratieproject wilt tonen:
-
-- zet alleen code, documentatie en assets in de repository
-- push geen echte klantbestanden of interne Excel-exporten
-- gebruik eventueel screenshots of testbestanden zonder gevoelige data
-
-Typische stappen:
-
-```bash
-git init -b main
-git add .
-git commit -m "Initial release"
-git remote add origin <jouw-github-repo-url>
-git push -u origin main
-```
