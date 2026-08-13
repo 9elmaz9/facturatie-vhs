@@ -75,26 +75,49 @@ De app ondersteunt meerdere formaten voor duurvelden:
 ## Praktische opmerkingen
 
 - `.xls` wordt in deze versie niet ondersteund; sla bestanden eerst op als `.xlsx`
+- tijdelijke Excel-bestanden zoals `~$.xlsx` zijn geen echte bronbestanden en kunnen niet verwerkt worden
 - een nieuwe upload vervangt de huidige selectie in dezelfde uploadzone
+- bij refresh of sluiten van de pagina gaat de huidige sessie verloren; download het resultaat dus eerst indien nodig
 - de interface is bewust eenvoudig gehouden; technische detailuitleg staat daarom hier in de `README`
 
 ## Openen via dubbelklik op Mac
 
-In deze map staan twee launcher-bestanden:
+Om de tool lokaal te gebruiken op een Mac, moet de projectmap eerst op de computer beschikbaar zijn.
+
+Dit kan op twee manieren:
+
+- clone de GitHub-repository lokaal
+- of download de repository als ZIP en pak die lokaal uit
+
+Daarna zijn in de projectmap twee launcher-bestanden beschikbaar:
 
 - `Install Facturatie VHS.command`
 - `Start Facturatie VHS.command`
 
 Gebruik ze als volgt:
 
-1. open eenmalig `Install Facturatie VHS.command`
-2. wacht tot de installatie van de virtuele omgeving en dependencies klaar is
-3. open daarna `Start Facturatie VHS.command`
-4. je browser opent automatisch het lokale adres van de app
+1. maak de repository lokaal beschikbaar op de Mac
+2. open eenmalig `Install Facturatie VHS.command`
+3. wacht tot de installatie van de virtuele omgeving en dependencies klaar is
+4. open daarna `Start Facturatie VHS.command`
+5. je browser opent automatisch het lokale adres van de app
 
 De app draait dan lokaal op je eigen laptop. Excel-bestanden worden alleen tijdens die sessie verwerkt en niet permanent opgeslagen in het project.
 
-## Lokaal starten
+## Repository
+
+Publieke repository:
+
+- `https://github.com/9elmaz9/facturatie-vhs`
+
+## Lokaal starten via Terminal
+
+```bash
+cd /pad/naar/facturatie-vhs
+./Start\ Facturatie\ VHS.command
+```
+
+## Lokaal starten via Python
 
 ```bash
 python3 -m venv .venv

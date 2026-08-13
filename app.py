@@ -8,6 +8,7 @@ import math
 import numbers
 from pathlib import Path
 import re
+import zipfile
 
 import pandas as pd
 import streamlit as st
@@ -17,6 +18,7 @@ APP_SUBTITLE = (
     "Vergelijk aanleverlijsten uit Digitalisering en MAM en maak een "
     "facturatie-overzicht per contentpartner."
 )
+REPOSITORY_URL = "https://github.com/9elmaz9/facturatie-vhs"
 BASE_DIR = Path(__file__).resolve().parent
 LOGO_PATH = BASE_DIR / "assets" / "meemoo_mark_white.png"
 FAVICON_PATH = BASE_DIR / "assets" / "favicon_mark.png"
@@ -58,9 +60,6 @@ SUMMARY_COLUMNS = {
     "total_digitalizer_duration": "Totale duur digitalisering",
     "total_mam_duration": "Totale duur MAM",
     "total_difference": "Totale afwijking",
-    "total_digitalizer_seconds": "Totaal seconden digitalisering",
-    "total_mam_seconds": "Totaal seconden MAM",
-    "total_difference_seconds": "Totaal seconden afwijking",
 }
 
 SUMMARY_VISIBLE_COLUMNS = [
@@ -80,14 +79,24 @@ DETAIL_COLUMNS = {
     "digitalizer_duration": "Duur digitalisering",
     "mam_duration": "Duur MAM",
     "difference": "Afwijking",
-    "digitalizer_duration_seconds": "Seconden digitalisering",
-    "mam_duration_seconds": "Seconden MAM",
-    "difference_seconds": "Seconden afwijking",
     "digitalizer_video_count": "Aantal regels digitalisering",
     "mam_video_count": "Aantal regels MAM",
     "digitalizer_rows": "Rijen digitalisering",
     "mam_rows": "Rijen MAM",
 }
+
+DETAIL_VISIBLE_COLUMNS = [
+    "PID",
+    "CP",
+    "Status",
+    "Duur digitalisering",
+    "Duur MAM",
+    "Afwijking",
+    "Aantal regels digitalisering",
+    "Aantal regels MAM",
+    "Rijen digitalisering",
+    "Rijen MAM",
+]
 
 ISSUE_COLUMNS = {
     "source": "Bron",
@@ -236,13 +245,38 @@ def get_uploaded_file_name(uploaded_file: object) -> str:
     return str(getattr(uploaded_file, "name", ""))
 
 
+def read_excel_file(uploaded_file: object) -> pd.DataFrame:
+    file_name = get_uploaded_file_name(uploaded_file) or "onbekend bestand"
+
+    try:
+        if isinstance(uploaded_file, dict):
+            return pd.read_excel(BytesIO(uploaded_file["bytes"]))
+        return pd.read_excel(uploaded_file)
+    except ValueError as exc:
+        message = str(exc).lower()
+        if "worksheet index 0 is invalid" in message or "worksheets found" in message:
+            raise ValueError(
+                f'Bestand "{file_name}" bevat geen leesbaar werkblad. '
+                "Controleer of het Excel-bestand minstens een tabblad met data heeft en "
+                "sla het daarna opnieuw op als .xlsx of .xlsm."
+            ) from exc
+        raise
+    except zipfile.BadZipFile as exc:
+        if file_name.startswith("~$"):
+            raise ValueError(
+                f'Bestand "{file_name}" lijkt een tijdelijk Excel-lockbestand te zijn. '
+                "Upload het echte Excel-bestand en niet de tijdelijke ~$.xlsx-versie."
+            ) from exc
+        raise ValueError(
+            f'Bestand "{file_name}" is geen leesbaar Excel-bestand. '
+            "Controleer of het bestand correct opent in Excel en sla het opnieuw op als .xlsx of .xlsm."
+        ) from exc
+
+
 def read_excel_collection(uploaded_files: list[object]) -> pd.DataFrame:
     dataframes = []
     for uploaded_file in uploaded_files:
-        if isinstance(uploaded_file, dict):
-            dataframes.append(pd.read_excel(BytesIO(uploaded_file["bytes"])))
-        else:
-            dataframes.append(pd.read_excel(uploaded_file))
+        dataframes.append(read_excel_file(uploaded_file))
     return pd.concat(dataframes, ignore_index=True) if dataframes else pd.DataFrame()
 
 
@@ -505,10 +539,12 @@ def build_display_frames(result: dict[str, pd.DataFrame]) -> dict[str, pd.DataFr
     details = result["details"].copy()
     details["status"] = details["status"].map(STATUS_LABELS).fillna(details["status"])
     details = details.rename(columns=DETAIL_COLUMNS)
+    details = details[DETAIL_VISIBLE_COLUMNS]
 
     mismatches = result["mismatches"].copy()
     mismatches["status"] = mismatches["status"].map(STATUS_LABELS).fillna(mismatches["status"])
     mismatches = mismatches.rename(columns=DETAIL_COLUMNS)
+    mismatches = mismatches[DETAIL_VISIBLE_COLUMNS]
 
     input_issues = result["input_issues"].copy()
     if not input_issues.empty:
@@ -687,6 +723,18 @@ def apply_theme() -> None:
             font-size: 0.82rem;
             margin-top: 0.45rem;
         }
+        div[data-testid="stMarkdownContainer"] p code,
+        div[data-testid="stMarkdownContainer"] li code {
+            background: #626b71;
+            color: #dff5ef;
+            border-radius: 8px;
+            padding: 0.16rem 0.42rem;
+        }
+        div[data-testid="stMarkdownContainer"] pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
         div[data-testid="stFileUploader"] {
             background: #f7f2e8;
             border: 1px dashed #d8d0c2;
@@ -725,8 +773,8 @@ def apply_theme() -> None:
             min-height: 52px;
             padding: 0 !important;
             position: relative !important;
-            background: #5f6862 !important;
-            border-color: #5f6862 !important;
+            background: #69716f !important;
+            border-color: #69716f !important;
         }
         div[data-testid="stFileUploader"] button::after {
             content: "Upload";
@@ -752,8 +800,8 @@ def apply_theme() -> None:
             color: #2bd0b7 !important;
         }
         div:has(.uploader-marker.idle) + div div[data-testid="stFileUploader"] button {
-            background: #5f6862 !important;
-            border-color: #5f6862 !important;
+            background: #69716f !important;
+            border-color: #69716f !important;
         }
         div:has(.uploader-marker.idle) + div div[data-testid="stFileUploader"] button::after {
             color: #ffffff !important;
@@ -813,6 +861,106 @@ def apply_theme() -> None:
             border: 1px solid #d8d0c2;
             border-radius: 18px;
             overflow: hidden;
+        }
+        div[data-testid="stExpander"] details summary {
+            background: #69716f;
+            border-radius: 16px 16px 0 0;
+            transition: background 0.2s ease;
+        }
+        div[data-testid="stExpander"] details summary:hover {
+            background: #747c7a;
+        }
+        div[data-testid="stExpander"] details[open] summary {
+            border-bottom: 1px solid #d8d0c2;
+        }
+        div[data-testid="stExpander"] details summary p {
+            color: #f5f7f0 !important;
+            font-weight: 700;
+        }
+        div[data-testid="stExpander"] details summary svg {
+            fill: #dff5ef !important;
+        }
+        .schema-help-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.7rem;
+            color: #213029;
+        }
+        .schema-help-list {
+            margin: 0 0 1rem 1.2rem;
+            padding: 0;
+        }
+        .schema-help-list li {
+            margin-bottom: 0.65rem;
+        }
+        .schema-link-row {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            color: #4c5b54;
+            font-size: 0.96rem;
+        }
+        .schema-link-row svg {
+            width: 18px;
+            height: 18px;
+            fill: #4c5b54;
+            flex: 0 0 auto;
+        }
+        .schema-link-row a {
+            color: #1e7f72;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .schema-link-row a:hover {
+            text-decoration: underline;
+        }
+        .session-warning {
+            margin: 0.45rem 0 1rem 0;
+            background: #fff6c7;
+            border: 1px solid #eadf9d;
+            border-radius: 14px;
+            color: #5a5230;
+            padding: 0.8rem 0.95rem;
+            font-size: 0.92rem;
+            box-shadow: 0 8px 18px rgba(33, 48, 41, 0.04);
+        }
+        .session-warning strong {
+            color: #4e4727;
+        }
+        .completion-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.85rem;
+            margin: 0.55rem 0 1rem 0;
+            background: linear-gradient(135deg, #2bd0b7 0%, #1eae99 100%);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 18px;
+            color: #f5f7f0;
+            padding: 0.95rem 1rem;
+            box-shadow: 0 10px 24px rgba(33, 48, 41, 0.08);
+        }
+        .completion-banner-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.18);
+            color: #ffffff;
+            font-weight: 800;
+            flex: 0 0 auto;
+        }
+        .completion-banner-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.15rem;
+        }
+        .completion-banner-text {
+            color: #dff5ef;
+            font-size: 0.92rem;
+            line-height: 1.45;
         }
         div[data-testid="stAlert"] {
             border-radius: 16px;
@@ -921,15 +1069,101 @@ def render_selected_file(uploaded_file: object) -> None:
 
 
 def show_schema_help() -> None:
+    github_icon = (
+        '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">'
+        '<path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 '
+        '0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52 '
+        '-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2 '
+        '-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 '
+        '7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 '
+        '2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 '
+        '0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"></path>'
+        "</svg>"
+    )
+    st.markdown(
+        f"""
+        <div class="schema-help">
+            <div class="schema-help-title">Benodigde kolommen</div>
+            <ul class="schema-help-list">
+                <li>Digitalisering: <code>PID</code>, <code>Total duration of tape</code></li>
+                <li>MAM: <code>CP</code>, <code>PID</code>, <code>file_duration</code></li>
+            </ul>
+            <div class="schema-link-row">
+                {github_icon}
+                <span>Volledige toelichting en README:</span>
+                <a href="{REPOSITORY_URL}" target="_blank" rel="noopener noreferrer">GitHub-repository</a>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_refresh_warning(has_session_data: bool) -> None:
+    is_enabled = "true" if has_session_data else "false"
+    st.html(
+        f"""
+        <div style="display:none"></div>
+        <script>
+        (() => {{
+            const enabled = {is_enabled};
+            const handlerKey = "__facturatieBeforeUnloadHandler";
+
+            if (window[handlerKey]) {{
+                window.removeEventListener("beforeunload", window[handlerKey]);
+                delete window[handlerKey];
+            }}
+
+            if (!enabled) {{
+                return;
+            }}
+
+            const handler = function(event) {{
+                event.preventDefault();
+                event.returnValue = "";
+            }};
+
+            window.addEventListener("beforeunload", handler);
+            window[handlerKey] = handler;
+        }})();
+        </script>
+        """,
+        unsafe_allow_javascript=True,
+    )
+
+
+def render_session_warning(has_session_data: bool) -> None:
+    if not has_session_data:
+        return
+
     st.markdown(
         """
-**Benodigde kolommen**
+        <div class="session-warning">
+            <strong>Opgelet:</strong> bij refresh of sluiten van de pagina gaat de huidige sessie verloren.
+            Download het resultaat eerst indien nodig.
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
-- Digitalisering: `PID`, `Total duration of tape`
-- MAM: `CP`, `PID`, `file_duration`
 
-Volledige toelichting staat in de `README`.
-        """
+def render_completion_banner(has_issues: bool) -> None:
+    subtitle = (
+        "Controleer de tabs Afwijkingen en Invoerproblemen."
+        if has_issues
+        else "Geen afwijkingen of invoerproblemen gevonden."
+    )
+    st.markdown(
+        f"""
+        <div class="completion-banner">
+            <div class="completion-banner-icon">✓</div>
+            <div>
+                <div class="completion-banner-title">Verwerking voltooid</div>
+                <div class="completion-banner-text">{subtitle}</div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
 
@@ -1004,6 +1238,9 @@ def main() -> None:
 
     digitalizer_stored_files = st.session_state["digitalizer_files_store"]
     mam_stored_file = st.session_state["mam_file_store"]
+    has_session_data = bool(digitalizer_stored_files or mam_stored_file)
+    render_refresh_warning(has_session_data)
+    render_session_warning(has_session_data)
 
     if not digitalizer_stored_files or not mam_stored_file:
         st.info("Laad minstens een aanleverlijst uit Digitalisering en een uit MAM op.")
@@ -1030,16 +1267,21 @@ def main() -> None:
         if not result["summary"].empty
         else "00:00:00"
     )
+    total_digitalizer_duration = (
+        format_seconds(result["summary"]["total_digitalizer_seconds"].sum())
+        if not result["summary"].empty
+        else "00:00:00"
+    )
 
-    if result["mismatches"].empty and result["input_issues"].empty:
-        st.success("Verwerking voltooid zonder afwijkingen of invoerproblemen.")
-    else:
-        st.warning("Verwerking voltooid. Controleer de tabs Afwijkingen en Invoerproblemen.")
+    render_completion_banner(
+        has_issues=not (result["mismatches"].empty and result["input_issues"].empty)
+    )
 
-    metric_one, metric_two, metric_three = st.columns(3)
+    metric_one, metric_two, metric_three, metric_four = st.columns(4)
     metric_one.metric("Aantal CP's", total_cp)
     metric_two.metric("Gekoppelde PID's", matched_count)
-    metric_three.metric("Totale afwijking", total_difference)
+    metric_three.metric("Totale duur digitalisering", total_digitalizer_duration)
+    metric_four.metric("Totale afwijking", total_difference)
 
     render_section_intro(
         "Overzicht per contentpartner",
