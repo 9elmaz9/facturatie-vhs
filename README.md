@@ -4,6 +4,18 @@ Deze app is bedoeld voor het vergelijken van aanleverlijsten uit `Digitalisering
 
 Op het scherm houden we de uitleg bewust kort. De volledige werkwijze en technische aannames staan hier in de `README`.
 
+## Projectcontext
+
+Deze tool is uitgewerkt voor een specifieke workflow binnen meemoo en is afgestemd op de verwachte Excel-structuren, kolomnamen en gewenste resultaten van deze case. De toepassing is daarom geen algemene oplossing voor willekeurige spreadsheets zonder verdere configuratie.
+
+Tegelijk is het project een praktisch voorbeeld van hoe je:
+
+- gegevens uit meerdere Excel-bestanden samenbrengt
+- records uit verschillende bronnen koppelt op een gemeenschappelijke sleutel
+- duurwaarden in verschillende formaten normaliseert en optelt
+- verschillen per `PID` berekent en per contentpartner groepeert
+- invoerproblemen zichtbaar maakt en de resultaten opnieuw naar Excel exporteert
+
 ## Interface en werkwijze
 
 De gebruikersinterface is verder verfijnd voor een duidelijke en efficiënte kwartaalverwerking.
