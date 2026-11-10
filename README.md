@@ -4,6 +4,25 @@ Deze app is bedoeld voor het vergelijken van aanleverlijsten uit `Digitalisering
 
 Op het scherm houden we de uitleg bewust kort. De volledige werkwijze en technische aannames staan hier in de `README`.
 
+## Interface en werkwijze
+
+De gebruikersinterface is verder verfijnd voor een duidelijke en efficiënte kwartaalverwerking.
+
+- voor de verwerking zijn de uploadzones voor `Digitalisering` en `MAM` duidelijk van elkaar gescheiden
+- de geselecteerde bestanden en hun status blijven zichtbaar
+- na de verwerking toont de app direct het aantal contentpartners, het aantal gekoppelde PID's, de totale duur van de digitalisering en de totale afwijking
+- het overzicht per contentpartner kan daarna als Excel-bestand worden gedownload
+
+De interface bevat alleen de informatie die tijdens de verwerking nodig is. Uitgebreide toelichting over invoerformaten, berekeningen en uitzonderingen staat in deze `README`.
+
+### Startscherm
+
+![Startscherm van Facturatie VHS](assets/screenshots/startscherm.png)
+
+### Verwerking en resultaat
+
+![Verwerking en resultaat in Facturatie VHS](assets/screenshots/verwerkingsresultaat.png)
+
 ## Doel
 
 Gebruik de app wanneer je:

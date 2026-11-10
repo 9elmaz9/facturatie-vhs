@@ -576,9 +576,13 @@ def apply_theme() -> None:
     st.markdown(
         """
         <style>
+        html, body, .stApp,
+        .stApp button, .stApp input, .stApp textarea, .stApp select {
+            font-family: "Century Gothic", "Source Sans", sans-serif !important;
+        }
         .stApp {
-            background: linear-gradient(180deg, #f3efe6 0%, #efe7d9 100%);
-            color: #213029;
+            background: #ffffff;
+            color: #505050;
         }
         .block-container {
             max-width: 1180px;
@@ -586,15 +590,20 @@ def apply_theme() -> None:
             padding-bottom: 2.5rem;
         }
         h1, h2, h3, p, li, label {
-            color: #213029;
+            color: #505050;
+        }
+        h1, h2, h3,
+        .section-title, .uploader-title, .file-selected-title {
+            color: #000000;
+            font-weight: 700;
         }
         .hero-card {
-            background: linear-gradient(135deg, #2bd0b7 0%, #1eae99 100%);
-            border-radius: 22px;
+            background: #00c8aa;
+            border-radius: 4px;
             padding: 26px 28px;
-            color: #f5f7f0;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            box-shadow: 0 14px 40px rgba(33, 48, 41, 0.12);
+            color: #000000;
+            border: 1px solid #00c8aa;
+            box-shadow: none;
             margin-bottom: 1rem;
         }
         .hero-layout {
@@ -619,13 +628,13 @@ def apply_theme() -> None:
             min-width: 0;
         }
         .hero-card h1 {
-            color: #f5f7f0;
+            color: #000000;
             font-size: 2.2rem;
             line-height: 1.1;
             margin: 0 0 0.75rem 0;
         }
         .hero-card p {
-            color: #dff5ef;
+            color: #000000;
             font-size: 1rem;
             margin: 0;
             max-width: 780px;
@@ -640,12 +649,12 @@ def apply_theme() -> None:
             }
         }
         .section-card {
-            background: #fbf8f1;
-            border: 1px solid #d8d0c2;
-            border-radius: 18px;
+            background: #ffffff;
+            border: 1px solid #e6e6e6;
+            border-radius: 4px;
             padding: 1rem 1rem 0.5rem 1rem;
             margin-bottom: 1rem;
-            box-shadow: 0 10px 24px rgba(33, 48, 41, 0.05);
+            box-shadow: none;
         }
         .section-title {
             font-size: 1.1rem;
@@ -653,7 +662,7 @@ def apply_theme() -> None:
             margin-bottom: 0.2rem;
         }
         .section-subtitle {
-            color: #6b756e;
+            color: #505050;
             font-size: 0.92rem;
             margin-bottom: 0.8rem;
         }
@@ -669,7 +678,7 @@ def apply_theme() -> None:
             font-size: 1rem;
         }
         .uploader-help {
-            color: #6b756e;
+            color: #505050;
             font-size: 0.88rem;
             margin-bottom: 0.8rem;
             min-height: 3.25rem;
@@ -683,22 +692,22 @@ def apply_theme() -> None:
             font-weight: 700;
         }
         .badge-idle {
-            background: #ece5d7;
-            color: #6b756e;
+            background: #e6e6e6;
+            color: #505050;
         }
         .badge-active {
-            background: #dcefe6;
-            color: #2bd0b7;
+            background: #e6e6e6;
+            color: #00857d;
         }
         .file-selected {
             margin-top: 0.75rem;
-            background: #f7f2e8;
-            border: 1px solid #e2d9ca;
-            border-radius: 14px;
+            background: #ffffff;
+            border: 1px solid #e6e6e6;
+            border-radius: 4px;
             padding: 0.8rem 0.9rem;
         }
         .file-selected-title {
-            color: #213029;
+            color: #000000;
             font-size: 0.9rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
@@ -708,10 +717,10 @@ def apply_theme() -> None:
             overflow-y: auto;
         }
         .file-selected-item {
-            color: #4c5b54;
+            color: #505050;
             font-size: 0.88rem;
             padding: 0.34rem 0;
-            border-bottom: 1px solid #ebe1d2;
+            border-bottom: 1px solid #e6e6e6;
             word-break: break-word;
         }
         .file-selected-item:last-child {
@@ -719,15 +728,15 @@ def apply_theme() -> None:
             padding-bottom: 0;
         }
         .selection-note {
-            color: #6b756e;
+            color: #969696;
             font-size: 0.82rem;
             margin-top: 0.45rem;
         }
         div[data-testid="stMarkdownContainer"] p code,
         div[data-testid="stMarkdownContainer"] li code {
-            background: #626b71;
-            color: #dff5ef;
-            border-radius: 8px;
+            background: #505050;
+            color: #ffffff;
+            border-radius: 2px;
             padding: 0.16rem 0.42rem;
         }
         div[data-testid="stMarkdownContainer"] pre code {
@@ -736,9 +745,9 @@ def apply_theme() -> None:
             padding: 0;
         }
         div[data-testid="stFileUploader"] {
-            background: #f7f2e8;
-            border: 1px dashed #d8d0c2;
-            border-radius: 16px;
+            background: #ffffff;
+            border: 1px dashed #969696;
+            border-radius: 4px;
             padding: 0.68rem 0.95rem;
             min-height: 136px;
             display: flex !important;
@@ -757,7 +766,7 @@ def apply_theme() -> None:
             align-items: center !important;
         }
         div[data-testid="stFileUploader"] small {
-            color: #6b756e;
+            color: #505050;
             transform: translateY(6px);
         }
         div[data-testid="stFileUploader"] button {
@@ -773,8 +782,9 @@ def apply_theme() -> None:
             min-height: 52px;
             padding: 0 !important;
             position: relative !important;
-            background: #69716f !important;
-            border-color: #69716f !important;
+            background: #505050 !important;
+            border-color: #505050 !important;
+            border-radius: 4px !important;
         }
         div[data-testid="stFileUploader"] button::after {
             content: "Upload";
@@ -793,98 +803,98 @@ def apply_theme() -> None:
             opacity: 0 !important;
         }
         div:has(.uploader-marker.selected) + div div[data-testid="stFileUploader"] button {
-            background: #dcefe6 !important;
-            border-color: #dcefe6 !important;
+            background: #00c8aa !important;
+            border-color: #00c8aa !important;
         }
         div:has(.uploader-marker.selected) + div div[data-testid="stFileUploader"] button::after {
-            color: #2bd0b7 !important;
+            color: #000000 !important;
         }
         div:has(.uploader-marker.idle) + div div[data-testid="stFileUploader"] button {
-            background: #69716f !important;
-            border-color: #69716f !important;
+            background: #505050 !important;
+            border-color: #505050 !important;
         }
         div:has(.uploader-marker.idle) + div div[data-testid="stFileUploader"] button::after {
             color: #ffffff !important;
         }
         div[data-testid="stMetric"] {
-            background: #fbf8f1;
-            border: 1px solid #d8d0c2;
-            border-radius: 18px;
+            background: #ffffff;
+            border: 1px solid #e6e6e6;
+            border-radius: 4px;
             padding: 0.55rem 0.8rem;
-            box-shadow: 0 10px 24px rgba(33, 48, 41, 0.05);
+            box-shadow: none;
         }
         div[data-testid="stMetric"] label {
-            color: #6b756e;
+            color: #505050;
             font-weight: 700;
         }
         div[data-testid="stMetricValue"] {
-            color: #213029;
+            color: #000000;
         }
         .stDownloadButton button,
         .stButton button {
-            background: #2bd0b7;
-            color: white;
+            background: #00857d;
+            color: #ffffff;
             border: none;
-            border-radius: 14px;
+            border-radius: 4px;
             padding: 0.78rem 1rem;
             font-weight: 700;
         }
         .stDownloadButton button:hover,
         .stButton button:hover {
-            background: #22b6a0;
-            color: white;
+            background: #00c8aa;
+            color: #000000;
         }
         div[data-baseweb="tab-list"] {
             gap: 0.55rem;
         }
         button[data-baseweb="tab"] {
-            background: #ece5d7;
-            border-radius: 14px 14px 0 0;
-            color: #213029;
+            background: #e6e6e6;
+            border-radius: 0;
+            color: #505050;
             border: none;
             padding: 0.65rem 0.95rem;
             font-weight: 700;
         }
         button[data-baseweb="tab"][aria-selected="true"] {
-            background: #2bd0b7;
-            color: white;
+            background: #00c8aa;
+            color: #000000;
         }
         div[data-testid="stDataFrame"] {
-            background: #fbf8f1;
-            border: 1px solid #d8d0c2;
-            border-radius: 18px;
+            background: #ffffff;
+            border: 1px solid #e6e6e6;
+            border-radius: 4px;
             padding: 0.25rem;
-            box-shadow: 0 10px 24px rgba(33, 48, 41, 0.05);
+            box-shadow: none;
         }
         div[data-testid="stExpander"] {
-            background: #fbf8f1;
-            border: 1px solid #d8d0c2;
-            border-radius: 18px;
+            background: #ffffff;
+            border: 1px solid #e6e6e6;
+            border-radius: 4px;
             overflow: hidden;
         }
         div[data-testid="stExpander"] details summary {
-            background: #69716f;
-            border-radius: 16px 16px 0 0;
+            background: #505050;
+            border-radius: 0;
             transition: background 0.2s ease;
         }
         div[data-testid="stExpander"] details summary:hover {
-            background: #747c7a;
+            background: #000000;
         }
         div[data-testid="stExpander"] details[open] summary {
-            border-bottom: 1px solid #d8d0c2;
+            border-bottom: 1px solid #e6e6e6;
         }
         div[data-testid="stExpander"] details summary p {
-            color: #f5f7f0 !important;
+            color: #ffffff !important;
             font-weight: 700;
         }
         div[data-testid="stExpander"] details summary svg {
-            fill: #dff5ef !important;
+            fill: #00c8aa !important;
         }
         .schema-help-title {
             font-size: 1.05rem;
             font-weight: 700;
             margin-bottom: 0.7rem;
-            color: #213029;
+            color: #000000;
         }
         .schema-help-list {
             margin: 0 0 1rem 1.2rem;
@@ -897,17 +907,17 @@ def apply_theme() -> None:
             display: inline-flex;
             align-items: center;
             gap: 0.45rem;
-            color: #4c5b54;
+            color: #505050;
             font-size: 0.96rem;
         }
         .schema-link-row svg {
             width: 18px;
             height: 18px;
-            fill: #4c5b54;
+            fill: #505050;
             flex: 0 0 auto;
         }
         .schema-link-row a {
-            color: #1e7f72;
+            color: #00857d;
             font-weight: 700;
             text-decoration: none;
         }
@@ -916,28 +926,28 @@ def apply_theme() -> None:
         }
         .session-warning {
             margin: 0.45rem 0 1rem 0;
-            background: #fff6c7;
-            border: 1px solid #eadf9d;
-            border-radius: 14px;
-            color: #5a5230;
+            background: #efca6a;
+            border: 1px solid #efca6a;
+            border-radius: 4px;
+            color: #000000;
             padding: 0.8rem 0.95rem;
             font-size: 0.92rem;
-            box-shadow: 0 8px 18px rgba(33, 48, 41, 0.04);
+            box-shadow: none;
         }
         .session-warning strong {
-            color: #4e4727;
+            color: #000000;
         }
         .completion-banner {
             display: flex;
             align-items: flex-start;
             gap: 0.85rem;
             margin: 0.55rem 0 1rem 0;
-            background: linear-gradient(135deg, #2bd0b7 0%, #1eae99 100%);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: 18px;
-            color: #f5f7f0;
+            background: #00c8aa;
+            border: 1px solid #00c8aa;
+            border-radius: 4px;
+            color: #000000;
             padding: 0.95rem 1rem;
-            box-shadow: 0 10px 24px rgba(33, 48, 41, 0.08);
+            box-shadow: none;
         }
         .completion-banner-icon {
             width: 30px;
@@ -946,7 +956,7 @@ def apply_theme() -> None:
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255, 255, 255, 0.18);
+            background: #000000;
             color: #ffffff;
             font-weight: 800;
             flex: 0 0 auto;
@@ -954,16 +964,16 @@ def apply_theme() -> None:
         .completion-banner-title {
             font-size: 1rem;
             font-weight: 700;
-            color: #ffffff;
+            color: #000000;
             margin-bottom: 0.15rem;
         }
         .completion-banner-text {
-            color: #dff5ef;
+            color: #000000;
             font-size: 0.92rem;
             line-height: 1.45;
         }
         div[data-testid="stAlert"] {
-            border-radius: 16px;
+            border-radius: 4px;
         }
         </style>
         """,
